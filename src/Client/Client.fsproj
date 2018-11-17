@@ -3,8 +3,23 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <!--<Compile Include="../Shared/Shared.fs" />-->
-    <Compile Include="CSharpAst.fs" />
+    <Compile Include="../Shared/Shared.fs" />
+    <!--
+    <Compile Include="..\CodeGen\Strict\CodeAnalysis.CSharp.fs" />
+    <Compile Include="..\CodeGen\Strict\CodeAnalysis.CSharp.Syntax.fs" />
+    <Compile Include="..\..\extern\cs2fs\paket-files\kekyo\Microsoft.CodeAnalysis.ActivePatterns\Microsoft.CodeAnalysis.ActivePatterns\CSharpActivePatterns.fs">
+      <Link>CSharpActivePatterns.fs</Link>
+    </Compile>
+    
+    <Compile Include="..\..\extern\cs2fs\cs2fs\CSharpActivePatternsExtra.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
+    <Compile Include="..\..\extern\cs2fs\cs2fs\Utils.fs" ><Link>CSharpActivePatterns.fs</Link></Compile>
+    <Compile Include="..\..\extern\cs2fs\cs2fs\CSharpActivePatternsExtra.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
+    <Compile Include="..\..\extern\cs2fs\cs2fs\FSharpDefs.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
+    <Compile Include="..\..\extern\cs2fs\cs2fs\Ast.fs" ><Link>CSharpActivePatterns.fs</Link></Compile>
+    <Compile Include="..\..\extern\cs2fs\cs2fs\FSharpOutput.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
+    <Compile Include="..\..\extern\cs2fs\cs2fs\cs2fs.fs"><Link>CSharpActivePatterns.fs</Link></Compile>-->
+
+
     <Compile Include="MirrorSharp.fs" />
     <Compile Include="Client.fs" />
   </ItemGroup>

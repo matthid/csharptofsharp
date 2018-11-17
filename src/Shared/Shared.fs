@@ -1,4 +1,5 @@
 namespace Shared
 
-type Counter = { Value : int }
+type ProcessingResult = { FSharpText : string }
 
+type ProcessCSharp = { CSharpText : string }

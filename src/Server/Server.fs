@@ -12,13 +12,14 @@ open Shared
 let publicPath = Path.GetFullPath "../Client/public"
 let port = 8085us
 
-let getInitCounter() : Task<Counter> = task { return { Value = 42 } }
 
 let webApp = router {
-    get "/api/init" (fun next ctx ->
+    post "/api/cs2fs" (fun next ctx ->
         task {
-            let! counter = getInitCounter()
-            return! Successful.OK counter next ctx
+            let! request = ctx.BindModelAsync<ProcessCSharp>()
+            let resultFsharp = cs2fs.Convert.convertText request.CSharpText
+            let result = { FSharpText = resultFsharp }
+            return! Successful.OK result next ctx
         })
 }
 

@@ -2,3 +2,6 @@ group Server
     FSharp.Core
     Saturn
     Thoth.Json.Giraffe
+    Microsoft.CodeAnalysis.CSharp
+    //Microsoft.CodeAnalysis.ActivePatterns
+    File: CSharpActivePatterns.fs

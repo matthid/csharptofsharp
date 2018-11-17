@@ -1,37 +1,35 @@
-# SAFE Template
+# csharptofsharp
 
-This template can be used to generate a full-stack web application using the [SAFE Stack](https://safe-stack.github.io/). It was created using the dotnet [SAFE Template](https://safe-stack.github.io/docs/template-overview/). If you want to learn more about the template why not start with the [quick start](https://safe-stack.github.io/docs/quickstart/) guide?
+Helper tool for newcomers in order to work with existing documentation (mostly C#) and trying to learn F#. Additionally, this tool can help advanced and expert F#'ers with porting existing C# snippets from StackOverflow for example.
 
-## Install pre-requisites
+## Goals
 
-You'll need to install the following pre-requisites in order to build SAFE applications
+* Easy to use (Website in the Browser)
+* Copy any C# code snippet (which specifying dependencies)
+* Get a reasonable result and links to helpful documentation if we cannot convert some features
 
-* The [.NET Core SDK](https://www.microsoft.com/net/download)
-* [FAKE 5](https://fake.build/) installed as a [global tool](https://fake.build/fake-gettingstarted.html#Install-FAKE)
-* The [Yarn](https://yarnpkg.com/lang/en/docs/install/) package manager (you an also use `npm` but the usage of `yarn` is encouraged).
-* [Node LTS](https://nodejs.org/en/download/) installed for the front end components.
-* If you're running on OSX or Linux, you'll also need to install [Mono](https://www.mono-project.com/docs/getting-started/install/).
+## Current proposed implementation
 
-## Work with the application
+* Use the [sharplab](https://sharplab.io/#v2:EYLgZgpghgLgrgJwgZwLQBEJinANjASQDsYIFsBjCAgWwAdcIaITYBLAeyIBoYQpkMbgBMQAagAAAQAMAAikBGANwBYAFBSAzAoBMcgMJyA3hrnmFOqQBY5AWQAUAShNmL7pQE4HAIgAqKDA+Tmrq7u52AJ4AgnRsvqSCwaHuAL4aqUA===) editor in the frontend.
+* Use https://github.com/jindraivanek/cs2fs as first transformation.
+* TODO: Transform Sharplab into objects usable in cs2fs (currently everything is red).
 
-To concurrently run the server and the client components in watch mode use the following command:
+## Side facts / Open issues
 
-```bash
-fake build -t Run
-```
+* I'd like to use the C# AST in order to not re-implement the C# compiler, however how to get that into the browser?
+  -> we get some json representation but cs2fs it not working with that, is there an easy way to fix that?
+  -> Maybe we can generate the stuff, similar to https://github.com/kekyo/Microsoft.CodeAnalysis.ActivePatterns
+  -> Can we generate the json serialisation as well?
+* I'd like to convert C# -> F# AST (which cs2fs is doing) in order to further refine F# AST later
+  -> Can we somehow use FCS-AST (instead of cs2fs custom AST) in the browser to the "real" AST?
+  -> cs2fs AST is fine, as long we have some intermediate representation
+* How to print F# AST to string
+  -> Can/Should we extend FCS?
 
+## Team
 
-## SAFE Stack Documentation
-
-You will find more documentation about the used F# components at the following places:
-
-* [Saturn](https://saturnframework.org/docs/)
-* [Fable](https://fable.io/docs/)
-* [Elmish](https://elmish.github.io/elmish/)
-* [Fulma](https://mangelmaxime.github.io/Fulma/)
-
-If you want to know more about the full Azure Stack and all of it's components (including Azure) visit the official [SAFE documentation](https://safe-stack.github.io/docs/).
-
-## Troubleshooting
-
-* **fake not found** - If you fail to execute `fake` from command line after installing it as a global tool, you might need to add it to your `PATH` manually: (e.g. `export PATH="$HOME/.dotnet/tools:$PATH"` on unix) - [related GitHub issue](https://github.com/dotnet/cli/issues/9321)
+@matthid, Twitter: @matthi__d, Slack: @matthid
+@JohBa, Twitter: @JoBaeurle, Slack: @johba
+@jindraivanek, Twitter: ?, Slack: @jindraivanek (maker of cs2fs)
+@johlrich, Twitter: ?, Slack: @johlrich
+@mvsmal, Twitter: ?, Slack: ?
