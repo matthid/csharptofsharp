@@ -311,9 +311,9 @@ let generateStrictActivePatternsForSyntax path (namespaceName: string) (syntaxTy
 
 let getTargetPath (prefix: string) fileName =
     if prefix.Length >= 1 then
-        (Path.Combine("..","..","..","..", "Microsoft.CodeAnalysis.ActivePatterns", prefix, fileName))
+        (Path.Combine("CodeGen", prefix, fileName))
     else
-        (Path.Combine("..","..","..","..", "Microsoft.CodeAnalysis.ActivePatterns", fileName))
+        (Path.Combine("CodeGen", fileName))
 
 let rec baseAbstractType (bottomType: Type) (t: Type) =
     if t = bottomType then
@@ -330,44 +330,40 @@ let getNodeName bottomType t =
         
 ////////////////////////////////////////////
 
-[<EntryPoint>]
-let main argv =
-    let valueTypes (nodeType: Type) =
-        nodeType.Assembly.GetTypes()
-        |> Seq.filter (fun t ->
-            t.IsPublic &&
-            t.IsValueType &&
-            (not t.IsEnum) &&
-            (not t.IsGenericType) &&
-            (not (isObsoleted t)))
-        |> Seq.toArray
+let valueTypes (nodeType: Type) =
+    nodeType.Assembly.GetTypes()
+    |> Seq.filter (fun t ->
+        t.IsPublic &&
+        t.IsValueType &&
+        (not t.IsEnum) &&
+        (not t.IsGenericType) &&
+        (not (isObsoleted t)))
+    |> Seq.toArray
 
-    generateActivePatternsForValue
-        (getTargetPath "" "ActivePatterns.fs")
-        "Microsoft.CodeAnalysis"
-        (valueTypes baseNodeType)
-        (fun t -> t.FullName)
+generateActivePatternsForValue
+    (getTargetPath "" "ActivePatterns.fs")
+    "Microsoft.CodeAnalysis"
+    (valueTypes baseNodeType)
+    (fun t -> t.FullName)
 
-    let syntaxTypes (nodeType: Type) =
-        nodeType.Assembly.GetTypes()
-        |> Seq.filter (fun t ->
-            t.IsPublic &&
-            t.IsSealed &&
-            (not t.IsGenericType) &&
-            nodeType.IsAssignableFrom t &&
-            (not (isObsoleted t)))
-        |> Seq.toArray
+let syntaxTypes (nodeType: Type) =
+    nodeType.Assembly.GetTypes()
+    |> Seq.filter (fun t ->
+        t.IsPublic &&
+        t.IsSealed &&
+        (not t.IsGenericType) &&
+        nodeType.IsAssignableFrom t &&
+        (not (isObsoleted t)))
+    |> Seq.toArray
 
-    generateLooseActivePatternsForSyntax
-        (getTargetPath "Loose" "ActivePatterns.fs")
-        (baseNodeType.Namespace + ".Loose")
-        (syntaxTypes csharpNodeType)
-        (getNodeName baseNodeType)
+generateLooseActivePatternsForSyntax
+    (getTargetPath "Loose" "ActivePatterns.fs")
+    (baseNodeType.Namespace + ".Loose")
+    (syntaxTypes csharpNodeType)
+    (getNodeName baseNodeType)
 
-    generateStrictActivePatternsForSyntax
-        (getTargetPath "Strict" "CSharpActivePatterns.fs")
-        (csharpNodeType.Namespace + ".Strict")
-        (syntaxTypes csharpNodeType)
-        (getNodeName csharpNodeType)
-
-    0
+generateStrictActivePatternsForSyntax
+    (getTargetPath "Strict" "CSharpActivePatterns.fs")
+    (csharpNodeType.Namespace + ".Strict")
+    (syntaxTypes csharpNodeType)
+    (getNodeName csharpNodeType)
