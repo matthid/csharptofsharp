@@ -15,6 +15,40 @@ open Fulma
 open Fable.Core
 open Fable.Import
 open Shared
+open JsInterop
+
+JsInterop.importAll "prismjs/themes/prism.css"
+let prism : obj = JsInterop.importAll "prismjs"
+JsInterop.importAll "prismjs/components/prism-fsharp"
+
+
+Browser.console.warn("imported", prism)
+type PrismElementProps =
+  { text : string
+    language : string }
+
+type PrismElementState =
+    { HasErrors : bool }
+
+type PrismElement(props) =
+    inherit React.Component<PrismElementProps, PrismElementState>(props)
+    do base.setInitState({ HasErrors = false })
+
+    let _highlight () =
+        prism?highlightAll(false, null)
+
+    override x.componentDidMount() =
+        _highlight()
+
+    override x.componentDidUpdate(p, n) =
+        _highlight()
+
+    override x.render() =
+        pre [] [
+            code [ ClassName x.props.language ] [ str x.props.text ]]
+
+let prismElement language text =
+    ofType<PrismElement,_,_> { text = text; language = language } [ ]
 
 type Model = 
     { LoadedEditor : bool
@@ -37,22 +71,15 @@ public class C {
 }"
 
 // defines the initial state and initial command (= side-effect) of the application
-let init () : Model * Cmd<Msg> =
-    let initialModel = 
-        { LoadedEditor = false
-          LoadingFSharpResult = None
-          CurrentCSharp = ""
-          LastProcessingResult =  { FSharpText = "" } }
-    initialModel, Cmd.none
 
-exception RequestFailed of Response
+exception RequestFailedException of Response
 let private errorString (response: Response) =
     string response.Status + " " + response.StatusText + " for URL " + response.Url
 let fetchNextResult (p : ProcessCSharp) : JS.Promise<ProcessingResult> =
     Fetch.postRecord<ProcessCSharp> "/api/cs2fs" p []
     |> Promise.bind (fun response ->
         if not response.Ok
-        then raise <| RequestFailed response
+        then raise <| RequestFailedException response
         else
             response.text()
             |> Promise.map (Decode.fromString (Decode.Auto.generateDecoder()))
@@ -67,6 +94,16 @@ let fetchNextCmd (csharpText) =
         { CSharpText = csharpText }
         (Ok >> LoadFSharpResultFinished)
         (Error >> LoadFSharpResultFinished)
+
+
+let init () : Model * Cmd<Msg> =
+    let initialModel = 
+        { LoadedEditor = false
+          LoadingFSharpResult = Some defaultCSharpText
+          CurrentCSharp = defaultCSharpText
+          LastProcessingResult = { FSharpText = "" } }
+    initialModel, fetchNextCmd defaultCSharpText
+
 let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
     match msg with
     | LoadFSharpResultFinished r ->
@@ -88,7 +125,7 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
 
     | StartLoadFSharpResult csharpText ->
         match currentModel.LoadingFSharpResult with
-        | Some t ->
+        | Some _ ->
             { currentModel with CurrentCSharp = csharpText }, Cmd.none
         | None ->
             let cmd = fetchNextCmd csharpText
@@ -134,6 +171,7 @@ let button txt onClick =
         [ str txt ]
 
 let view (model : Model) (dispatch : Msg -> unit) =
+    
     div []
         [ Navbar.navbar [ Navbar.Color IsPrimary ]
             [ Navbar.Item.div [ ]
@@ -142,20 +180,25 @@ let view (model : Model) (dispatch : Msg -> unit) =
 
           Container.container []
               [ 
+                div []
+                    [                    
+                        textarea
+                            [ Id "MirrorSharpEditor"
+                              Ref (fun element ->
+                                  // Ref is trigger with null once for stateless element so we need to wait for the second trigger
+                                  if not (isNull element) then
+                                      // The div has been mounted check if this is the first time
+                                      if not model.LoadedEditor then
+                                          // This is the first time, we can trigger a draw
+                                          dispatch LoadEditor 
+                                  )
+                              DefaultValue defaultCSharpText ] [ ]
+                    ]                          
 
-                textarea
-                    [ Id "MirrorSharpEditor"
-                      Ref (fun element ->
-                          // Ref is trigger with null once for stateless element so we need to wait for the second trigger
-                          if not (isNull element) then
-                              // The div has been mounted check if this is the first time
-                              if not model.LoadedEditor then
-                                  // This is the first time, we can trigger a draw
-                                  dispatch LoadEditor 
-                          )
-                      DefaultValue defaultCSharpText ] [ ]
-
-                textarea [ Value model.LastProcessingResult.FSharpText ] []                 
+                prismElement "language-fsharp" model.LastProcessingResult.FSharpText
+                //pre []
+                //    [ code [ ClassName "language-fsharp" ] [ str model.LastProcessingResult.FSharpText ]]
+                //textarea [ Value model.LastProcessingResult.FSharpText ] []                 
                ]
 
           Footer.footer [ ]
