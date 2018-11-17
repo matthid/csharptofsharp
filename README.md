@@ -14,4 +14,12 @@ Helper tool for newcomers in order to work with existing documentation (mostly C
 * Use https://github.com/jindraivanek/cs2fs as first transformation.
 * TODO: Transform Sharplab into objects usable in cs2fs (currently everything is red).
 
+## Side facts / Open issues
 
+* I'd like to use the C# AST in order to not re-implement the C# compiler, however how to get that into the browser?
+  -> we get some json representation but cs2fs it not working with that, is there an easy way to fix that?
+* I'd like to convert C# -> F# AST (which cs2fs is doing) in order to further refine F# AST later
+  -> Can we somehow use FCS-AST (instead of cs2fs custom AST) in the browser to the "real" AST?
+  -> cs2fs AST is fine, as long we have some intermediate representation
+* How to print F# AST to string
+  -> Can/Should we extend FCS?
