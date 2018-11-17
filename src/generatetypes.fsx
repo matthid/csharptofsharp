@@ -71,6 +71,21 @@ let getTupleArgs (t: Type) =
       |> Seq.choose targetProperty
       |> Seq.toArray
 
+let toLowerFirst (s:string) =
+    string (System.Char.ToLower(s.[0])) + s.[1..]
+let getConstructorArgs (p: PropertyInfo) =
+    match p.PropertyType with
+    | Value et
+    | Token et
+    | Node et
+    | List et ->
+        Some (toLowerFirst p.Name, p)
+    | Another ->
+        None
+
+let getConstructorParamString (name, p:PropertyInfo) =
+    String.Format("{0}:{1}", name, p.PropertyType.FullName)
+
 let getTupleArgsString (name: string) (p: PropertyInfo) =
     match p.PropertyType with
     | Value et
@@ -113,7 +128,7 @@ let getPatternName (t: Type) =
 ////////////////////////////////////////////
 
 let writeHeader (tw: TextWriter) =
-    tw.WriteLine("// This is auto-generated source code by Microsoft.CodeAnalysis.ActivePatterns, DO NOT EDIT!")
+    tw.WriteLine("// This is auto-generated source code by generatetypes.fsx, DO NOT EDIT!")
     tw.WriteLine()
        
 let generateActivePatternsForValue path (namespaceName: string) (valueTypes: Type seq) (nodeName: Type -> string) =
@@ -309,6 +324,56 @@ let generateStrictActivePatternsForSyntax path (namespaceName: string) (syntaxTy
 
 ////////////////////////////////////////////
 
+let generateStrictTypesForSyntax path (namespaceName: string) (syntaxTypes: Type seq) (nodeName: Type -> string) =
+    use tw = File.CreateText(path)
+
+    writeHeader tw
+
+    tw.WriteLine("namespace rec {0}", namespaceName)
+    tw.WriteLine()
+
+    syntaxTypes |> Seq.iter (fun t ->
+        
+        let propertiesAndNames =
+            getTupleArgs t
+            |> Seq.choose (getConstructorArgs)
+        let constructorArgString =
+            propertiesAndNames
+            |> Seq.map getConstructorParamString
+            |> fun s -> String.Join(", ", s)
+        
+        tw.WriteLine("[<AllowNullLiteral>]")
+        tw.WriteLine("type {0}(children: Microsoft.CodeAnalysis.SyntaxNode list, range:string, rawObj :obj) =", t.Name)
+        tw.WriteLine("    inherit {0}(children, range, rawObj)", t.BaseType.FullName)
+        //for (name, p) in propertiesAndNames do
+        //    tw.WriteLine("    member x.{0} = {1}", p.Name, name)
+        tw.WriteLine()
+
+    )
+
+    
+    tw.WriteLine("module Converter = ")
+    tw.WriteLine("    let fromType (sType:string) rawObj range children =")
+    tw.WriteLine("        match sType with")
+    syntaxTypes
+    |> Seq.filter (fun t -> t.IsSealed)
+    |> Seq.iter (fun t ->
+
+        let name = 
+            if t.Name.EndsWith("Syntax") then
+                t.Name.Substring(0, t.Name.Length - "Syntax".Length)
+            else t.Name            
+        tw.WriteLine("        | \"{0}\" -> new {1}(children, range, rawObj) :> Microsoft.CodeAnalysis.SyntaxNode", name, t.Name)
+
+    )
+
+    tw.WriteLine("        | _ -> failwithf \"unknown type %s\" sType")
+    tw.WriteLine()
+
+    tw.Flush()
+
+////////////////////////////////////////////
+
 let getTargetPath (prefix: string) fileName =
     if prefix.Length >= 1 then
         (Path.Combine("CodeGen", prefix, fileName))
@@ -356,6 +421,16 @@ let syntaxTypes (nodeType: Type) =
         (not (isObsoleted t)))
     |> Seq.toArray
 
+let allSyntaxTypes (nodeType: Type) =
+    nodeType.Assembly.GetTypes()
+    |> Seq.filter (fun t ->
+        t.IsPublic &&
+        //t.IsSealed &&
+        (not t.IsGenericType) &&
+        nodeType.IsAssignableFrom t &&
+        (not (isObsoleted t)))
+    |> Seq.toArray
+
 generateLooseActivePatternsForSyntax
     (getTargetPath "Loose" "ActivePatterns.fs")
     (baseNodeType.Namespace + ".Loose")
@@ -366,4 +441,18 @@ generateStrictActivePatternsForSyntax
     (getTargetPath "Strict" "CSharpActivePatterns.fs")
     (csharpNodeType.Namespace + ".Strict")
     (syntaxTypes csharpNodeType)
+    (getNodeName csharpNodeType)
+
+generateStrictTypesForSyntax
+    (getTargetPath "Strict" "CodeAnalysis.CSharp.fs")
+    (csharpNodeType.Namespace)
+    (allSyntaxTypes csharpNodeType
+        |> Seq.filter (fun t -> t.Namespace = csharpNodeType.Namespace))
+    (getNodeName csharpNodeType)
+
+generateStrictTypesForSyntax
+    (getTargetPath "Strict" "CodeAnalysis.CSharp.Syntax.fs")
+    (csharpNodeType.Namespace + ".Syntax")
+    (allSyntaxTypes csharpNodeType
+        |> Seq.filter (fun t -> t.Namespace = csharpNodeType.Namespace + ".Syntax"))
     (getNodeName csharpNodeType)

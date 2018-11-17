@@ -5,7 +5,22 @@
         <TargetFramework>netcoreapp2.1</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
+        <ProjectReference Include="..\..\extern\cs2fs\paket-files\jack-pappas\ExtCore\ExtCore\ExtCore.fsproj" />
+    </ItemGroup>
+    <ItemGroup>
         <Compile Include="..\Shared\Shared.fs" />
+        
+        <Compile Include="..\..\extern\cs2fs\paket-files\kekyo\Microsoft.CodeAnalysis.ActivePatterns\Microsoft.CodeAnalysis.ActivePatterns\CSharpActivePatterns.fs">
+        <Link>CSharpActivePatterns.fs</Link>
+        </Compile>
+        
+        <Compile Include="..\..\extern\cs2fs\cs2fs\CSharpActivePatternsExtra.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\cs2fs\Utils.fs" ><Link>CSharpActivePatterns.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\cs2fs\CSharpActivePatternsExtra.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\cs2fs\FSharpDefs.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\cs2fs\Ast.fs" ><Link>CSharpActivePatterns.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\cs2fs\FSharpOutput.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\cs2fs\cs2fs.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
         <Compile Include="Server.fs" />
     </ItemGroup>
     <Import Project="..\..\.paket\Paket.Restore.targets" />

@@ -2,7 +2,6 @@ module MirrorSharp
 
 open Fable.Core
 open Fable.Import
-open CSharpAst
 
 type IServerOptions =
     abstract language : string with get, set
@@ -54,7 +53,7 @@ type ICodeMirrorCallbacks =
     abstract slowUpdateWait : (unit -> unit) with get, set
     abstract slowUpdateResult : (obj -> unit) with get, set
     abstract connectionChange : (obj -> unit) with get, set
-    abstract textChange : (obj -> unit) with get, set
+    abstract textChange : ((unit -> string) -> unit) with get, set
     abstract serverError : (obj -> unit) with get, set
 
 type IMirrorSharpOptions =
@@ -64,39 +63,3 @@ type IMirrorSharpOptions =
 
 JsInterop.importAll "mirrorsharp/mirrorsharp.less"
 let mirrorSharp (x: Browser.HTMLElement) (y:IMirrorSharpOptions) : ICodeMirrorInstance = JsInterop.importAll "mirrorsharp"
-
-let toTriviaType (s:string) =
-    match s with
-    | "WhitespaceTrivia" -> WhitespaceTrivia
-    | "EndOfLineTrivia" -> EndOfLineTrivia
-    | _ -> UnknownTrivia s
-
-let toNodeType (s:string) =
-    match s with
-    | "MethodDeclaration" -> MethodDeclaration
-    | "CompilationUnit" -> CompilationUnit
-    | "ClassDeclaration" -> ClassDeclaration
-    | "NamespaceDeclaration" -> NamespaceDeclaration
-    | _ -> UnknownNode s
-
-let toTokenType (s:string) =
-    match s with
-    | "IdentifierToken" -> IdentifierToken
-    | "OpenBraceToken" -> OpenBraceToken
-    | "PublicKeyword" -> PublicKeyword
-    | _ -> UnknownToken s
-
-[<AutoOpen>]
-module AstItemRawExt =
-    type AstItemRaw with
-        member x.AsAstItem =
-            match x.asttype with
-            | "value" ->
-                AstItem.AstValue (x.range, x.value)
-            | "trivia" ->
-                AstItem.AstTrivia(x.range, toTriviaType x.kind, x.value)
-            | "node" ->
-                AstItem.AstNode(x.range, x.children |> Array.map (fun i -> i.AsAstItem), toNodeType x.kind)
-            | "token" ->
-                AstItem.AstToken(x.range, x.children |> Array.map (fun i -> i.AsAstItem), toTokenType x.kind, x.property)
-            | _ -> UnknownAstItemType x            
