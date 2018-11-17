@@ -29,7 +29,7 @@ Helper tool for newcomers in order to work with existing documentation (mostly C
 ## Team
 
 @matthid, Twitter: @matthi__d, Slack: @matthid
-@JohBa, Twitter: @JoBaeurle, Slack: @hns
+@JohBa, Twitter: @JoBaeurle, Slack: @johba
 @jindraivanek, Twitter: ?, Slack: @jindraivanek (maker of cs2fs)
 @johlrich, Twitter: ?, Slack: @johlrich
 @mvsmal, Twitter: ?, Slack: ?
