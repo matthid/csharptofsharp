@@ -1,0 +1,12 @@
+source https://www.nuget.org/api/v2
+framework: netstandard2.0, netcoreapp2.0
+//nuget ExtCore
+github jack-pappas/ExtCore
+nuget FAKE
+nuget FSharp.Core
+nuget Microsoft.CodeAnalysis.CSharp
+//nuget Microsoft.CodeAnalysis.ActivePatterns
+github kekyo/Microsoft.CodeAnalysis.ActivePatterns:f9bc559e48252d474bea484ec9e21bbf6280ba42 Microsoft.CodeAnalysis.ActivePatterns/CSharpActivePatterns.fs
+nuget Expecto
+nuget FSharp.Compiler.Tools
+nuget Microsoft.Net.Compilers
