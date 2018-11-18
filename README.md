@@ -16,15 +16,15 @@ Helper tool for newcomers in order to work with existing documentation (mostly C
 
 ## Side facts / Open issues
 
-* I'd like to use the C# AST in order to not re-implement the C# compiler, however how to get that into the browser?
-  -> we get some json representation but cs2fs it not working with that, is there an easy way to fix that?
-  -> Maybe we can generate the stuff, similar to https://github.com/kekyo/Microsoft.CodeAnalysis.ActivePatterns
-  -> Can we generate the json serialisation as well?
-* I'd like to convert C# -> F# AST (which cs2fs is doing) in order to further refine F# AST later
-  -> Can we somehow use FCS-AST (instead of cs2fs custom AST) in the browser to the "real" AST?
-  -> cs2fs AST is fine, as long we have some intermediate representation
-* How to print F# AST to string
-  -> Can/Should we extend FCS?
+* How can we forward 'range' information in order to correlate C# and F# positions (like sharplab does when marking AST-Elements)?
+* Handling of cases we don't support (ie currently I changed it to write `//UNKNOWN` into the source code).
+* Adding hints/comments to the generated code
+* Add a second pass to make the F# code more "F#"-Like (maybe selectable via UI)
+* Improve cs2fs (ie add missing cases and tests)
+* UI improvements...
+* Start working on deployment/domain?
+* Think about other features, like marking the C# code when hovering over parts of the F# code (to see what code lead to what F# code)
+* Cleanup and make the repository public
 
 ## Team
 
