@@ -8,7 +8,7 @@ Helper tool for newcomers in order to work with existing documentation (mostly C
 * Copy any C# code snippet (which specifying dependencies)
 * Get a reasonable result and links to helpful documentation if we cannot convert some features
 
-## Current proposed implementation
+## Current implementation
 
 * Use the [sharplab](https://sharplab.io/#v2:EYLgZgpghgLgrgJwgZwLQBEJinANjASQDsYIFsBjCAgWwAdcIaITYBLAeyIBoYQpkMbgBMQAagAAAQAMAAikBGANwBYAFBSAzAoBMcgMJyA3hrnmFOqQBY5AWQAUAShNmL7pQE4HAIgAqKDA+Tmrq7u52AJ4AgnRsvqSCwaHuAL4aqUA===) editor in the frontend.
 * Use https://github.com/jindraivanek/cs2fs as first transformation.
@@ -27,6 +27,8 @@ Helper tool for newcomers in order to work with existing documentation (mostly C
 * Cleanup and make the repository public
 
 ## Team
+
+See also our [contribution guideline](CONTRIBUTE.md).
 
 @matthid, Twitter: @matthi__d, Slack: @matthid
 @JohBa, Twitter: @JoBaeurle, Slack: @johba
