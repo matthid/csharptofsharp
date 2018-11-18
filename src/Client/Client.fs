@@ -16,6 +16,7 @@ open Fable.Core
 open Fable.Import
 open Shared
 open JsInterop
+open Fable.Import.React
 
 JsInterop.importAll "./scss/customize_all.scss";
 
@@ -55,7 +56,8 @@ type Model =
     { LoadedEditor : bool
       LoadingFSharpResult : string option
       CurrentCSharp : string
-      LastProcessingResult : ProcessingResult }
+      LastProcessingResult : ProcessingResult
+      CSharpEditorWidth : double }
 
 // The Msg type defines what events/actions can occur while the application is running
 // the state of the application changes *only* in reaction to these events
@@ -63,6 +65,7 @@ type Msg =
 | LoadEditor
 | StartLoadFSharpResult of string
 | LoadFSharpResultFinished of Result<ProcessingResult, exn>
+| Resize of double
 
 let defaultCSharpText = "using System;
 public class C {
@@ -102,7 +105,8 @@ let init () : Model * Cmd<Msg> =
         { LoadedEditor = false
           LoadingFSharpResult = Some defaultCSharpText
           CurrentCSharp = defaultCSharpText
-          LastProcessingResult = { FSharpText = "" } }
+          LastProcessingResult = { FSharpText = "" }
+          CSharpEditorWidth = 50.0 }
     initialModel, fetchNextCmd defaultCSharpText
 
 let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
@@ -162,6 +166,9 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
             editor.sendServerOptions(serverOptions)
         )
         nextModel, cmd
+    | Resize x ->
+        { currentModel with CSharpEditorWidth = x}, Cmd.none
+
 
 
 let button txt onClick =
@@ -182,9 +189,12 @@ let view (model : Model) (dispatch : Msg -> unit) =
 
           Section.section [ Section.Props [ Id "editor" ] ]
               [ 
-                Columns.columns [ Columns.CustomClass "is-variable is-1"]
+                Columns.columns [ Columns.IsGapless ]
                     [
-                      Column.column [ Column.Width (Screen.All, Column.IsHalf) ]
+                      Column.column 
+                        [ Column.CustomClass "is-resizable"
+                          Column.Props [ Style [ Width ("calc("+model.CSharpEditorWidth.ToString()+"% - 5px)") ] ] 
+                        ]
                         [
                           div [ ClassName "CSharpEditor" ]
                              [                    
@@ -202,7 +212,14 @@ let view (model : Model) (dispatch : Msg -> unit) =
                                    DefaultValue defaultCSharpText ] [ ]
                              ]      
                         ]
-                      Column.column [ Column.Width (Screen.All, Column.IsHalf) ]
+                      Column.column [ ]
+                        [ span [ ClassName "resizer-horizontal";
+                               ] [ ] 
+                        ]
+                      Column.column 
+                        [ Column.CustomClass "is-resizable"
+                          Column.Props [ Style [ Width ("calc(100% - "+model.CSharpEditorWidth.ToString()+"% - 5px)")] ] 
+                        ]
                         [
                           prismElement "language-fsharp" model.LastProcessingResult.FSharpText
                           //pre []
