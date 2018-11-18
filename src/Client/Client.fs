@@ -17,7 +17,8 @@ open Fable.Import
 open Shared
 open JsInterop
 
-JsInterop.importAll "prismjs/themes/prism.css"
+JsInterop.importAll "./scss/customize_all.scss";
+
 let prism : obj = JsInterop.importAll "prismjs"
 JsInterop.importAll "prismjs/components/prism-fsharp"
 
@@ -172,38 +173,49 @@ let button txt onClick =
 
 let view (model : Model) (dispatch : Msg -> unit) =
     
-    div []
-        [ Navbar.navbar [ Navbar.Color IsPrimary ]
-            [ Navbar.Item.div [ ]
-                [ Heading.h2 [ ]
-                    [ str "SAFE Template" ] ] ]
+    div [ Id "cs2fs" ]
+        [ Navbar.navbar [ ]
+            [ Navbar.Brand.div [] 
+                [ Navbar.Item.a [ Navbar.Item.Props [ Href "#" ]]
+                    [ str "Csharp2Fsharp"] ]
+                ]
 
-          Container.container []
+          Section.section [ Section.Props [ Id "editor" ] ]
               [ 
-                div []
-                    [                    
-                        textarea
-                            [ Id "MirrorSharpEditor"
-                              Ref (fun element ->
-                                  // Ref is trigger with null once for stateless element so we need to wait for the second trigger
-                                  if not (isNull element) then
-                                      // The div has been mounted check if this is the first time
-                                      if not model.LoadedEditor then
-                                          // This is the first time, we can trigger a draw
-                                          dispatch LoadEditor 
-                                  )
-                              DefaultValue defaultCSharpText ] [ ]
-                    ]                          
-
-                prismElement "language-fsharp" model.LastProcessingResult.FSharpText
-                //pre []
-                //    [ code [ ClassName "language-fsharp" ] [ str model.LastProcessingResult.FSharpText ]]
-                //textarea [ Value model.LastProcessingResult.FSharpText ] []                 
-               ]
+                Columns.columns [ Columns.CustomClass "is-variable is-1"]
+                    [
+                      Column.column [ Column.Width (Screen.All, Column.IsHalf) ]
+                        [
+                          div [ ClassName "CSharpEditor" ]
+                             [                    
+                              textarea
+                                 [ Id "MirrorSharpEditor"
+                                   ClassName "csharp"
+                                   Ref (fun element ->
+                                       // Ref is trigger with null once for stateless element so we need to wait for the second trigger
+                                       if not (isNull element) then
+                                           // The div has been mounted check if this is the first time
+                                           if not model.LoadedEditor then
+                                               // This is the first time, we can trigger a draw
+                                               dispatch LoadEditor 
+                                       )
+                                   DefaultValue defaultCSharpText ] [ ]
+                             ]      
+                        ]
+                      Column.column [ Column.Width (Screen.All, Column.IsHalf) ]
+                        [
+                          prismElement "language-fsharp" model.LastProcessingResult.FSharpText
+                          //pre []
+                          //    [ code [ ClassName "language-fsharp" ] [ str model.LastProcessingResult.FSharpText ]]
+                          //textarea [ Value model.LastProcessingResult.FSharpText ] []  ]
+                        ]
+                    ]     
+              ]
 
           Footer.footer [ ]
                 [ Content.content [ Content.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
-                    [  ] ] ]
+                    [  ] ] 
+        ]
 
 #if DEBUG
 open Elmish.Debug
@@ -220,3 +232,22 @@ Program.mkProgram init update view
 //|> Program.withDebugger
 #endif
 |> Program.run
+
+// div []
+//                      [                    
+//                          textarea
+//                              [ Id "MirrorSharpEditor"
+//                                Ref (fun element ->
+//                                    // Ref is trigger with null once for stateless element so we need to wait for the second trigger
+//                                    if not (isNull element) then
+//                                        // The div has been mounted check if this is the first time
+//                                        if not model.LoadedEditor then
+//                                            // This is the first time, we can trigger a draw
+//                                            dispatch LoadEditor 
+//                                    )
+//                                DefaultValue defaultCSharpText ] [ ]
+//                      ]      
+//                      prismElement "language-fsharp" model.LastProcessingResult.FSharpText
+//                      //pre []
+//                      //    [ code [ ClassName "language-fsharp" ] [ str model.LastProcessingResult.FSharpText ]]
+//                      //textarea [ Value model.LastProcessingResult.FSharpText ] []  ]
