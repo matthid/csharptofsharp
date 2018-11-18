@@ -12,7 +12,6 @@ Helper tool for newcomers in order to work with existing documentation (mostly C
 
 * Use the [sharplab](https://sharplab.io/#v2:EYLgZgpghgLgrgJwgZwLQBEJinANjASQDsYIFsBjCAgWwAdcIaITYBLAeyIBoYQpkMbgBMQAagAAAQAMAAikBGANwBYAFBSAzAoBMcgMJyA3hrnmFOqQBY5AWQAUAShNmL7pQE4HAIgAqKDA+Tmrq7u52AJ4AgnRsvqSCwaHuAL4aqUA===) editor in the frontend.
 * Use https://github.com/jindraivanek/cs2fs as first transformation.
-* TODO: Transform Sharplab into objects usable in cs2fs (currently everything is red).
 
 ## Side facts / Open issues
 
