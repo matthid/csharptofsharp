@@ -8,7 +8,6 @@ open Giraffe
 open Saturn
 open Shared
 
-
 let publicPath = Path.GetFullPath "../Client/public"
 let port = 8085us
 

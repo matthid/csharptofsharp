@@ -13,18 +13,6 @@ Helper tool for newcomers in order to work with existing documentation (mostly C
 * Use the [sharplab](https://sharplab.io/#v2:EYLgZgpghgLgrgJwgZwLQBEJinANjASQDsYIFsBjCAgWwAdcIaITYBLAeyIBoYQpkMbgBMQAagAAAQAMAAikBGANwBYAFBSAzAoBMcgMJyA3hrnmFOqQBY5AWQAUAShNmL7pQE4HAIgAqKDA+Tmrq7u52AJ4AgnRsvqSCwaHuAL4aqUA===) editor in the frontend.
 * Use https://github.com/jindraivanek/cs2fs as first transformation.
 
-## Side facts / Open issues
-
-* How can we forward 'range' information in order to correlate C# and F# positions (like sharplab does when marking AST-Elements)?
-* Handling of cases we don't support (ie currently I changed it to write `//UNKNOWN` into the source code).
-* Adding hints/comments to the generated code
-* Add a second pass to make the F# code more "F#"-Like (maybe selectable via UI)
-* Improve cs2fs (ie add missing cases and tests)
-* UI improvements...
-* Start working on deployment/domain?
-* Think about other features, like marking the C# code when hovering over parts of the F# code (to see what code lead to what F# code)
-* Cleanup and make the repository public
-
 ## Team
 
 See also our [contribution guideline](CONTRIBUTE.md).
