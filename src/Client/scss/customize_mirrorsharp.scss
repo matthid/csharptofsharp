@@ -1,0 +1,15 @@
+@import "~codemirror/lib/codemirror.css";
+@import "~codemirror/addon/lint/lint.css";
+@import "~codemirror/addon/hint/show-hint.css";
+@import "~codemirror-addon-infotip/dist/infotip.css";
+@import "~codemirror-addon-lint-fix/dist/lint-fix.css";
+@import "~mirrorsharp/mirrorsharp.css";
+
+
+.CodeMirror {
+    height: 100% !important;
+}
+
+.CSharpEditor {
+    height: 100%;
+}
