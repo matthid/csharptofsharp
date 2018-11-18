@@ -29,3 +29,4 @@ If you make changes there:
 * `git remote add cs2fs git@github.com:matthid/cs2fs.git`
 * `git subtree push --prefix=extern/cs2fs cs2fs mybranch`
 * Open the pull request on GitHub
+
