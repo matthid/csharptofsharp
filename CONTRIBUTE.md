@@ -30,3 +30,6 @@ If you make changes there:
 * `git subtree push --prefix=extern/cs2fs cs2fs mybranch`
 * Open the pull request on GitHub
 
+To get the latest changes you can use
+
+* `git subtree pull --prefix=extern/cs2fs https://github.com/jindraivanek/cs2fs master`
