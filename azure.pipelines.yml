@@ -1,0 +1,30 @@
+queue:
+  name: Hosted VS2017
+
+variables:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+steps:
+- task: DotNetCoreInstaller@0
+  displayName: 'Use .NET Core sdk 2.1.500'
+  inputs:
+    version: 2.1.500
+
+- task: NodeTool@0
+  displayName: 'Use Node 10.13.0'
+  inputs:
+    versionSpec: 10.13.0
+
+- script: 'dotnet tool install fake-cli -g'
+  displayName: 'Install fake-cli as global tool'
+
+- task: Bash@3
+  displayName: 'Restore cs2fs'
+  inputs:
+    targetType: filePath
+    filePath: ./extern/cs2fs/build.sh
+    arguments: Clean
+    workingDirectory: extern/cs2fs
+
+- script: 'fake build'
+  displayName: 'Run fake build'
