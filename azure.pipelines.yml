@@ -18,13 +18,9 @@ steps:
 - script: 'dotnet tool install fake-cli -g'
   displayName: 'Install fake-cli as global tool'
 
-- task: Bash@3
+- script: 'fake build -t Clean'
+  workingDirectory: $(Build.SourcesDirectory)/extern/cs2fs
   displayName: 'Restore cs2fs'
-  inputs:
-    targetType: filePath
-    filePath: ./extern/cs2fs/build.sh
-    arguments: Clean
-    workingDirectory: extern/cs2fs
 
 - script: 'fake build'
   displayName: 'Run fake build'
