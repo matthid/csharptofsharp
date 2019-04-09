@@ -4,6 +4,10 @@ queue:
 variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
+pr:
+- master
+- releases/*
+
 steps:
 - task: DotNetCoreInstaller@0
   displayName: 'Use .NET Core sdk 2.1.500'
