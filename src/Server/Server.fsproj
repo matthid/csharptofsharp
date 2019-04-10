@@ -5,7 +5,8 @@
         <TargetFramework>netcoreapp2.1</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\..\extern\cs2fs\paket-files\jack-pappas\ExtCore\ExtCore\ExtCore.fsproj" />
+        <!--<ProjectReference Include="..\..\extern\cs2fs\paket-files\jack-pappas\ExtCore\ExtCore\ExtCore.fsproj" />-->
+        <Compile Include="..\..\extern\cs2fs\paket-files\jack-pappas\ExtCore\ExtCore\Pervasive.fs" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="..\Shared\Shared.fs" />
@@ -14,13 +15,12 @@
         <Link>CSharpActivePatterns.fs</Link>
         </Compile>
         
-        <Compile Include="..\..\extern\cs2fs\cs2fs\CSharpActivePatternsExtra.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
-        <Compile Include="..\..\extern\cs2fs\cs2fs\Utils.fs" ><Link>CSharpActivePatterns.fs</Link></Compile>
-        <Compile Include="..\..\extern\cs2fs\cs2fs\CSharpActivePatternsExtra.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
-        <Compile Include="..\..\extern\cs2fs\cs2fs\FSharpDefs.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
-        <Compile Include="..\..\extern\cs2fs\cs2fs\Ast.fs" ><Link>CSharpActivePatterns.fs</Link></Compile>
-        <Compile Include="..\..\extern\cs2fs\cs2fs\FSharpOutput.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
-        <Compile Include="..\..\extern\cs2fs\cs2fs\cs2fs.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\src\cs2fs\CSharpActivePatternsExtra.fs"><Link>CSharpActivePatterns.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\src\cs2fs\Utils.fs" ><Link>Utils.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\src\cs2fs\FSharpDefs.fs"><Link>FSharpDefs.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\src\cs2fs\Ast.fs" ><Link>Ast.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\src\cs2fs\FSharpOutput.fs"><Link>FSharpOutput.fs</Link></Compile>
+        <Compile Include="..\..\extern\cs2fs\src\cs2fs\cs2fs.fs"><Link>cs2fs.fs</Link></Compile>
         <Compile Include="Server.fs" />
     </ItemGroup>
     <Import Project="..\..\.paket\Paket.Restore.targets" />
