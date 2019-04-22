@@ -9,6 +9,16 @@ open cs2fs.CSharpActivePatternsExtra
 open Microsoft.CodeAnalysis.CSharp.Syntax
 open AST.Mk
 
+let groupByChooser chooser s =
+    let items1, items2 =
+        s |> List.map (fun i -> 
+            match chooser i with
+            | Some v -> Some v, None
+            | None -> None, Some i)
+        |> List.unzip
+    items1 |> List.choose id, items2 |> List.choose id     
+
+
 exception MissingCase of string
 
 let sequence ctx xs = ExprSequence(ctx, xs |> Seq.toList) 
@@ -58,6 +68,7 @@ type ErrorType =
     | UnknownPostfixOperator of string
     | BreakNotSupported
     | ContinueNotSupported
+    | UnsupportedConstructors
     | UnknownNode
 
 type ConvertError =
@@ -273,9 +284,9 @@ let rec convertNode tryImplicitConv (model: SemanticModel) (node: SyntaxNode) : 
             ]
             
         | ConstructorDeclarationSyntax (attrs,_,parsIn,init,block,_) ->
-            match getParameters parsIn with
-            | [] -> ConvertResults.Empty, []
-            | _ ->
+            //match getParameters parsIn with
+            //| [] -> ConvertResults.Empty, []
+            //| _ ->
             let (pars, optionalParExprs) = printParamaterList (classGenerics) parsIn
             let blockRes, block = descend block
 
@@ -358,16 +369,44 @@ let rec convertNode tryImplicitConv (model: SemanticModel) (node: SyntaxNode) : 
             let inheritFrom = bases |> List.filter (fun b -> Set.contains b interfaces |> not)
             let inheritMembers = inheritFrom |> List.map (fun b -> ExprInherit (basesIn :> SyntaxNode, TypType (TypeId b)))
             
-            let members = members |> List.map (getMembers gs)
+            let membersAndResults = members |> List.map (getMembers gs)
+            let results = membersAndResults |> Seq.map fst |> collectResults
 
             // Constructor is tricky, first let's check if there is a default constructor
-            //members |> Seq.tryFind(fun (_, exp) -> exp.)
-
-
-            members |> Seq.map fst |> collectResults,
-            ExprType (n, TypeId ident,
-                TypeDeclClass (n, getModifiers node, gs, PatTuple(n, []), inheritMembers @ (members |> List.collect snd) @ interfaceMembers))
-            |> applyAttributes attrs
+            let members = membersAndResults |> List.collect snd
+            let constructors, members =
+                members
+                |> groupByChooser (fun exp -> 
+                    match exp with
+                    | ExprMemberConstructor (ctx, modifiers, pat, expr) -> Some (ctx, modifiers, pat, expr)
+                    | _ -> None)
+            
+            let defaultConstructors, constructors =
+                constructors |> groupByChooser (function (ctx, modifiers, PatTuple(_, []), body) -> Some(ctx, modifiers, body) | _ -> None)
+                        
+            match defaultConstructors with
+            | [ ] ->
+                // TODO: not correct as there shouldn't be one , but our code-gen needs it (we should probably make it private)
+                results,
+                ExprType (n, TypeId ident,
+                    TypeDeclClass (n, getModifiers node, gs, PatTuple(n, []), inheritMembers @ (constructors |> List.map ExprMemberConstructor) @ members @ interfaceMembers))
+                |> applyAttributes attrs
+            | [ (ctx, modifiers, body) ] ->
+                // ok we have our default constructor
+                // TODO: modifiers need to be applied
+                // TODO: DO block for body?
+                results,
+                ExprType (n, TypeId ident,
+                    TypeDeclClass (n, getModifiers node, gs, PatTuple(ctx, []), inheritMembers @ [ body ] @ (constructors |> List.map ExprMemberConstructor) @ members @ interfaceMembers))
+                |> applyAttributes attrs
+            | _ -> 
+                // multiple default constructors?
+                ErrorType.UnsupportedConstructors
+                |> createError n
+                |> addError results,
+                ExprType (n, TypeId ident,
+                    TypeDeclClass (n, getModifiers node, gs, PatTuple(n, []), inheritMembers @ (constructors |> List.map ExprMemberConstructor) @ members @ interfaceMembers))
+                |> applyAttributes attrs
 
         | MethodDeclarationSyntax _ as n -> 
             let results, members = getMembers [] n
